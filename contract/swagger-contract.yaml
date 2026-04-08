@@ -72,6 +72,14 @@ components:
     PriceResponse:
       type: object
       description: Applicable price result
+      required:
+        - productId
+        - brandId
+        - priceList
+        - startDate
+        - endDate
+        - price
+        - currency
       properties:
         productId:
           type: integer
@@ -95,7 +103,8 @@ components:
           description: End date of the applicable rate
         price:
           type: number
-          description: Final sale price
+          multipleOf: 0.01
+          description: Final sale price with up to 2 decimal places
         currency:
           $ref: '#/components/schemas/Currency'
 
