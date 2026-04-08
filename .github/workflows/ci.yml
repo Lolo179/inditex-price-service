@@ -34,3 +34,39 @@ jobs:
           name: surefire-reports
           path: target/surefire-reports/
           retention-days: 7
+
+      - name: Start application
+        run: |
+          nohup java -jar target/*.jar > app.log 2>&1 &
+          echo $! > app.pid
+
+      - name: Wait for application to be ready
+        run: |
+          echo "Waiting for app to start..."
+          timeout 60 bash -c 'until curl -s http://localhost:8080/api/v1/prices > /dev/null; do sleep 2; done'
+          echo "App is ready"
+
+      - name: Install Newman
+        run: npm install -g newman
+
+      - name: Run Postman collection
+        run: |
+          newman run src/test/resources/price-service.postman_collection.json \
+            --env-var baseUrl=http://localhost:8080 \
+            --reporters cli,junit \
+            --reporter-junit-export target/newman-results.xml
+
+      - name: Publish Newman results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: newman-results
+          path: target/newman-results.xml
+          retention-days: 7
+
+      - name: Stop application
+        if: always()
+        run: |
+          if [ -f app.pid ]; then
+            kill $(cat app.pid) || true
+          fi
