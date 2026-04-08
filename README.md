@@ -77,6 +77,10 @@ curl "http://localhost:8080/api/v1/prices?applicationDate=2020-06-14T10:00:00&pr
 
 Available at **http://localhost:8080/swagger-ui.html** once the application is running.
 
+To explore the contract without running the app, open it directly in Swagger Editor:
+
+[Open in Swagger Editor](https://editor.swagger.io/?url=https://raw.githubusercontent.com/Lolo179/inditex-price-service/main/contract/swagger-contract.yaml)
+
 ---
 
 ## Tests
