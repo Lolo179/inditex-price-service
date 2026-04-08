@@ -3,8 +3,9 @@ package com.inditex.prices.repository;
 import com.inditex.prices.repository.entity.PriceEntity;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
+import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.jdbc.Sql;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -12,8 +13,18 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+/**
+ * JPA integration tests.
+ *
+ * @DataJpaTest spins up a minimal Spring context with only JPA/Hibernate beans
+ * and an isolated in-memory H2 instance (separate from the main app datasource).
+ * Hibernate creates the schema from @Entity classes (ddl-auto=create-drop).
+ * @Sql loads the sample data before each test method, within the test transaction
+ * which is automatically rolled back after each test — keeping tests independent.
+ */
 @DataJpaTest
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@TestPropertySource(properties = "spring.sql.init.mode=never")
+@Sql("/data.sql")
 class PriceRepositoryTest {
 
     @Autowired

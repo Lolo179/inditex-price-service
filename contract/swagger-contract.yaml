@@ -60,6 +60,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 
 components:
   schemas:
@@ -91,8 +97,13 @@ components:
           type: number
           description: Final sale price
         currency:
-          type: string
-          description: ISO 4217 currency code
+          $ref: '#/components/schemas/Currency'
+
+    Currency:
+      type: string
+      description: ISO 4217 currency code
+      enum:
+        - EUR
 
     ErrorResponse:
       type: object

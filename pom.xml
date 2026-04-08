@@ -85,6 +85,18 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<!-- Boot 4.x: @DataJpaTest moved to its own starter -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<!-- Boot 4.x: @AutoConfigureMockMvc moved to its own starter -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-webmvc-test</artifactId>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -100,9 +112,24 @@
 							<goal>generate</goal>
 						</goals>
 						<configuration>
-							<inputSpec>${project.basedir}/src/main/resources/openapi/swagger-contract.yaml</inputSpec>
+							<inputSpec>${project.basedir}/contract/swagger-contract.yaml</inputSpec>
 							<generatorName>spring</generatorName>
-							<output>${project.build.directory}/generated-sources/openapi</output>
+							<output>${project.basedir}</output>
+							<!--
+							  The generator appends src/main/java internally, so classes land at:
+							    src/main/java/com/inditex/prices/controller/api/PricesApi.java
+							    src/main/java/com/inditex/prices/controller/dto/PriceResponse.java
+							    src/main/java/com/inditex/prices/controller/dto/ErrorResponse.java
+							  Visible in the IDE. Excluded from git via .gitignore.
+							-->
+							<addCompileSourceRoot>true</addCompileSourceRoot>
+							<!--
+							  Only generate the API interface and model classes.
+							  Suppresses supporting files (pom.xml, README.md, Application.java, etc.)
+							  that the generator would otherwise create in target/ as noise.
+							-->
+							<generateSupportingFiles>false</generateSupportingFiles>
+							<!-- Generated classes land in OUR packages under com.inditex.prices -->
 							<apiPackage>com.inditex.prices.controller.api</apiPackage>
 							<modelPackage>com.inditex.prices.controller.dto</modelPackage>
 							<configOptions>

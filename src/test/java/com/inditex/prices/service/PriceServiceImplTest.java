@@ -3,6 +3,7 @@ package com.inditex.prices.service;
 import com.inditex.prices.exception.PriceNotFoundException;
 import com.inditex.prices.repository.PriceRepository;
 import com.inditex.prices.repository.entity.PriceEntity;
+import com.inditex.prices.service.domain.Currency;
 import com.inditex.prices.service.domain.Price;
 import com.inditex.prices.service.mapper.PriceEntityMapper;
 import org.junit.jupiter.api.Test;
@@ -42,7 +43,7 @@ class PriceServiceImplTest {
         Price expected = new Price(productId, brandId, 1,
                 LocalDateTime.of(2020, 6, 14, 0, 0),
                 LocalDateTime.of(2020, 12, 31, 23, 59, 59),
-                new BigDecimal("35.50"), "EUR");
+                new BigDecimal("35.50"), Currency.EUR);
 
         when(priceRepository.findApplicablePrice(brandId, productId, applicationDate))
                 .thenReturn(Optional.of(entity));
@@ -80,7 +81,7 @@ class PriceServiceImplTest {
         Price expected = new Price(productId, brandId, 2,
                 LocalDateTime.of(2020, 6, 14, 15, 0),
                 LocalDateTime.of(2020, 6, 14, 18, 30),
-                new BigDecimal("25.45"), "EUR");
+                new BigDecimal("25.45"), Currency.EUR);
 
         when(priceRepository.findApplicablePrice(brandId, productId, applicationDate))
                 .thenReturn(Optional.of(entity));

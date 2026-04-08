@@ -2,9 +2,10 @@ package com.inditex.prices.controller;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -12,9 +13,20 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+/**
+ * Full-stack integration tests.
+ *
+ * @SpringBootTest starts the complete application context.
+ * @ActiveProfiles("test") loads application-test.properties, which uses a dedicated
+ * H2 in-memory instance and disables noisy logging during tests.
+ * data.sql is executed automatically via spring.sql.init.mode=always after
+ * Hibernate creates the schema (spring.jpa.defer-datasource-initialization=true).
+ * All tests are read-only (GET), so no teardown between tests is needed.
+ */
 @SpringBootTest
 @AutoConfigureMockMvc
-class PriceControllerIT {
+@ActiveProfiles("test")
+class PriceControllerTest {
 
     @Autowired
     private MockMvc mockMvc;

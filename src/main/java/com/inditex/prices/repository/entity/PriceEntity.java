@@ -2,9 +2,12 @@ package com.inditex.prices.repository.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,8 +16,16 @@ import lombok.Setter;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+import com.inditex.prices.service.domain.Currency;
+
 @Entity
-@Table(name = "PRICES")
+@Table(
+        name = "PRICES",
+        indexes = @Index(
+                name = "idx_prices_brand_product_dates",
+                columnList = "brand_id, product_id, start_date, end_date"
+        )
+)
 @Getter
 @Setter
 @NoArgsConstructor
@@ -22,6 +33,7 @@ public class PriceEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", nullable = false)
     private Long id;
 
     @Column(name = "brand_id", nullable = false)
@@ -39,12 +51,13 @@ public class PriceEntity {
     @Column(name = "product_id", nullable = false)
     private Long productId;
 
-    @Column(nullable = false)
+    @Column(name = "priority", nullable = false)
     private Integer priority;
 
-    @Column(nullable = false, precision = 10, scale = 2)
+    @Column(name = "price", nullable = false, precision = 10, scale = 2)
     private BigDecimal price;
 
-    @Column(nullable = false, length = 3)
-    private String currency;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "curr", nullable = false, length = 3)
+    private Currency currency;
 }

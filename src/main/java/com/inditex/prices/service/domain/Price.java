@@ -10,5 +10,5 @@ public record Price(
         LocalDateTime startDate,
         LocalDateTime endDate,
         BigDecimal price,
-        String currency
+        Currency currency
 ) {}
