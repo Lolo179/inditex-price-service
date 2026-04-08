@@ -5,7 +5,7 @@ public final class ErrorMessages {
     private ErrorMessages() {}
 
     public static final String PRICE_NOT_FOUND =
-            "No applicable price found for productId=%d, brandId=%d at %s";
+            "No applicable price found for brandId=%d, productId=%d at %s";
 
     public static final String MISSING_PARAMETER =
             "Missing required parameter: %s";

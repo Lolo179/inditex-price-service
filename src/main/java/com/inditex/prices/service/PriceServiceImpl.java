@@ -33,7 +33,7 @@ public class PriceServiceImpl implements PriceService {
                 .orElseThrow(() -> {
                     log.warn("No applicable price found - brandId={}, productId={}, applicationDate={}", brandId, productId, applicationDate);
                     return new PriceNotFoundException(
-                            String.format(ErrorMessages.PRICE_NOT_FOUND, productId, brandId, applicationDate)
+                            String.format(ErrorMessages.PRICE_NOT_FOUND, brandId, productId, applicationDate)
                     );
                 });
     }
