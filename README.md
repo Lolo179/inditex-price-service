@@ -73,6 +73,44 @@ curl "http://localhost:8080/api/v1/prices?applicationDate=2020-06-14T10:00:00&pr
 
 ---
 
+## Docker
+
+### Build the image
+
+```bash
+docker build -t price-service .
+```
+
+### Run the container
+
+```bash
+docker run -d -p 8080:8080 --name price-service price-service
+```
+
+The application starts on **http://localhost:8080**
+
+### Stop and remove
+
+```bash
+docker stop price-service && docker rm price-service
+```
+
+---
+
+## CI
+
+The repository includes a GitHub Actions workflow at `.github/workflows/ci.yml` that runs automatically on every pull request targeting `main`.
+
+**Steps:**
+1. Checkout code
+2. Set up Java 21 (Temurin) with Maven cache
+3. `./mvnw verify` — compiles, runs all 26 tests, and validates the build
+4. Uploads Surefire test reports as a build artifact
+
+The workflow must pass before a PR can be merged into `main` (enforced via branch protection rules).
+
+---
+
 ## Swagger UI
 
 Available at **http://localhost:8080/swagger-ui.html** once the application is running.
@@ -122,12 +160,42 @@ Requiere la aplicación corriendo en `http://localhost:8080`.
 
 ## Architecture
 
-```
-Controller  →  Service  →  Repository
-    ↓              ↓
- DTO Mapper   Entity Mapper
-    ↓              ↓
- PriceResponse   Price (domain record)
+```mermaid
+flowchart TD
+    subgraph API["API Layer (generated from contract)"]
+        contract["contract/swagger-contract.yaml"]
+        gen["openapi-generator-maven-plugin"]
+        api["PricesApi (interface)"]
+        dto["PriceResponse / ErrorResponse / Currency (DTOs)"]
+        contract --> gen --> api & dto
+    end
+
+    subgraph Controller["Controller Layer"]
+        ctrl["PriceController"]
+        mapper_dto["PriceDtoMapper (MapStruct)"]
+    end
+
+    subgraph Service["Service Layer"]
+        svc["PriceServiceImpl"]
+        domain["Price (domain record)"]
+    end
+
+    subgraph Repository["Repository Layer"]
+        repo["PriceRepository (JPA)"]
+        entity["PriceEntity"]
+    end
+
+    subgraph DB["Database"]
+        h2["H2 in-memory\n(PRICES table)"]
+    end
+
+    client["HTTP Client"] -->|GET /api/v1/prices| ctrl
+    api -.implements.- ctrl
+    ctrl --> mapper_dto --> domain
+    ctrl --> svc
+    svc --> repo
+    repo --> entity --> h2
+    svc --> domain
 ```
 
 - **Contract-first**: `contract/swagger-contract.yaml` is the source of truth. The API interface and DTOs are generated at compile time via `openapi-generator-maven-plugin`.

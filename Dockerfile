@@ -2,6 +2,7 @@
 FROM maven:3-eclipse-temurin-21 AS builder
 WORKDIR /app
 COPY pom.xml .
+COPY contract ./contract
 COPY src ./src
 RUN mvn package -DskipTests -q
 
