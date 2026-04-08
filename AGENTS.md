@@ -27,7 +27,10 @@ price-service/
 │       └── resources/
 │           ├── application-test.properties
 │           └── price-service.postman_collection.json
-├── Dockerfile
+├── .github/
+│   └── workflows/
+│       └── ci.yml               # GitHub Actions CI (triggered on PR to main)
+├── Dockerfile                       # Multi-stage build (Maven builder + JRE 21 runtime)
 ├── pom.xml
 └── README.md
 ```
@@ -57,6 +60,12 @@ Para modificar la API, editar **únicamente** `contract/swagger-contract.yaml`.
 
 # Construir el JAR
 .\mvnw.cmd package -DskipTests
+
+# Construir imagen Docker
+docker build -t price-service .
+
+# Ejecutar contenedor
+docker run -d -p 8080:8080 --name price-service price-service
 ```
 
 ## Convenciones
