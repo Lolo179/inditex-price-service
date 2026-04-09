@@ -8,10 +8,12 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
 
+@Validated
 @RestController
 @RequiredArgsConstructor
 public class PriceController implements PricesApi {
