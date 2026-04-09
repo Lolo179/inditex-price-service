@@ -44,16 +44,18 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<ErrorResponse> handleConstraintViolation(ConstraintViolationException ex) {
         String message = ex.getConstraintViolations().stream()
-                .map(cv -> {
-                    String path = cv.getPropertyPath().toString();
-                    String paramName = path.contains(".") ? path.substring(path.lastIndexOf('.') + 1) : path;
-                    return String.format(ErrorMessages.INVALID_PARAMETER_CONSTRAINT,
-                            cv.getInvalidValue(), paramName, cv.getMessage());
-                })
+                .map(this::formatConstraintViolation)
                 .collect(Collectors.joining(", "));
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(new ErrorResponse().message(message));
+    }
+
+    private String formatConstraintViolation(jakarta.validation.ConstraintViolation<?> cv) {
+        String path = cv.getPropertyPath().toString();
+        String paramName = path.contains(".") ? path.substring(path.lastIndexOf('.') + 1) : path;
+        return String.format(ErrorMessages.INVALID_PARAMETER_CONSTRAINT,
+                cv.getInvalidValue(), paramName, cv.getMessage());
     }
 
     @ExceptionHandler(Exception.class)
