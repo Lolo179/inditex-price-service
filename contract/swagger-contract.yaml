@@ -34,6 +34,7 @@ paths:
           schema:
             type: integer
             format: int64
+            minimum: 1
         - name: brandId
           in: query
           required: true
@@ -41,6 +42,7 @@ paths:
           schema:
             type: integer
             format: int64
+            minimum: 1
       responses:
         '200':
           description: Applicable price found

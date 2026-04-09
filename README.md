@@ -198,6 +198,25 @@ flowchart TD
     svc --> domain
 ```
 
+---
+
+## Design decisions
+
+### BRAND table and foreign key omitted
+
+The exercise specification mentions that `BRAND_ID` in the `PRICES` table could reference a `BRAND` table. This foreign key has been deliberately omitted for the following reasons:
+
+- The exercise does not require querying brand attributes — `brandId` is used solely as a filter parameter.
+- Adding a `BRAND` table and its FK would introduce additional setup (DDL, seed data, JPA entity, cascade config) with no functional benefit for the scope of this service.
+- In a real system this relationship would exist and would be owned by a separate bounded context (e.g. a Brand service), making a cross-service FK an anti-pattern in any case.
+
+If the FK were required, it would be declared on `PriceEntity` as:
+```java
+@ManyToOne(fetch = FetchType.LAZY)
+@JoinColumn(name = "brand_id", nullable = false)
+private BrandEntity brand;
+```
+
 - **Contract-first**: `contract/swagger-contract.yaml` is the source of truth. The API interface and DTOs are generated at compile time via `openapi-generator-maven-plugin`.
 - **MapStruct** handles all object mapping between layers.
 - **H2 in-memory** database — schema created by Hibernate, seeded by `data.sql`.

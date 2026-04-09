@@ -21,9 +21,12 @@ import com.inditex.prices.service.domain.Currency;
 @Entity
 @Table(
         name = "PRICES",
+        // Index ordered by priority DESC before date ranges so the DB can stop at the first
+        // row that satisfies the date filter (early-exit with LIMIT 1), avoiding an in-memory
+        // sort. On H2 the DESC hint is advisory; on PostgreSQL/MySQL 8+ it is fully enforced.
         indexes = @Index(
-                name = "idx_prices_brand_product_dates",
-                columnList = "brand_id, product_id, start_date, end_date"
+                name = "idx_prices_lookup",
+                columnList = "brand_id, product_id, priority DESC, start_date, end_date"
         )
 )
 @Getter
