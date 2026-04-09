@@ -13,6 +13,9 @@ public final class ErrorMessages {
     public static final String INVALID_PARAMETER =
             "Invalid value '%s' for parameter '%s'";
 
+    public static final String INVALID_PARAMETER_CONSTRAINT =
+            "Invalid value '%s' for parameter '%s': %s";
+
     public static final String INTERNAL_SERVER_ERROR =
             "An unexpected error occurred. Please try again later.";
 }

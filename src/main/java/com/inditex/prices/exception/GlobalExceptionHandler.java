@@ -1,6 +1,7 @@
 package com.inditex.prices.exception;
 
 import com.inditex.prices.controller.dto.ErrorResponse;
+import jakarta.validation.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -9,6 +10,8 @@ import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import java.util.stream.Collectors;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -36,6 +39,21 @@ public class GlobalExceptionHandler {
                 .status(HttpStatus.BAD_REQUEST)
                 .body(new ErrorResponse().message(
                         String.format(ErrorMessages.INVALID_PARAMETER, ex.getValue(), ex.getName())));
+    }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<ErrorResponse> handleConstraintViolation(ConstraintViolationException ex) {
+        String message = ex.getConstraintViolations().stream()
+                .map(cv -> {
+                    String path = cv.getPropertyPath().toString();
+                    String paramName = path.contains(".") ? path.substring(path.lastIndexOf('.') + 1) : path;
+                    return String.format(ErrorMessages.INVALID_PARAMETER_CONSTRAINT,
+                            cv.getInvalidValue(), paramName, cv.getMessage());
+                })
+                .collect(Collectors.joining(", "));
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(new ErrorResponse().message(message));
     }
 
     @ExceptionHandler(Exception.class)

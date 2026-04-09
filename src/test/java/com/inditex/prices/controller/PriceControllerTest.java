@@ -122,4 +122,44 @@ class PriceControllerTest {
                         .param("brandId", BRAND_ID))
                 .andExpect(status().isBadRequest());
     }
+
+    @Test
+    void shouldReturn400_whenProductIdIsZero() throws Exception {
+        mockMvc.perform(get(BASE_URL)
+                        .param("applicationDate", "2020-06-14T10:00:00")
+                        .param("productId", "0")
+                        .param("brandId", BRAND_ID))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").exists());
+    }
+
+    @Test
+    void shouldReturn400_whenProductIdIsNegative() throws Exception {
+        mockMvc.perform(get(BASE_URL)
+                        .param("applicationDate", "2020-06-14T10:00:00")
+                        .param("productId", "-1")
+                        .param("brandId", BRAND_ID))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").exists());
+    }
+
+    @Test
+    void shouldReturn400_whenBrandIdIsZero() throws Exception {
+        mockMvc.perform(get(BASE_URL)
+                        .param("applicationDate", "2020-06-14T10:00:00")
+                        .param("productId", PRODUCT_ID)
+                        .param("brandId", "0"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").exists());
+    }
+
+    @Test
+    void shouldReturn400_whenBrandIdIsNegative() throws Exception {
+        mockMvc.perform(get(BASE_URL)
+                        .param("applicationDate", "2020-06-14T10:00:00")
+                        .param("productId", PRODUCT_ID)
+                        .param("brandId", "-5"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").exists());
+    }
 }
